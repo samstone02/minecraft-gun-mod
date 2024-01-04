@@ -1,4 +1,12 @@
 {
-  "item.gun-mod.musket": "Musket"
+	"_comment": "Tooltips are not yet working. Need to override appendToolTip in the item class.",
+	"item.gun-mod.musket": "Musket",
+	"item.gun-mod.musket.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!",
+	"item.gun-mod.boltshot": "Boltshot",
+	"item.gun-mod.boltshot.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!",
+	"item.gun-mod.roundshot": "Roundshot",
+	"item.gun-mod.roundshot.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!",
+	"item.gun-mod.shellshot": "Shellshot",
+	"item.gun-mod.shellshot.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!"
 }
 

@@ -4,11 +4,14 @@
 	"pattern": [
 		"iii",
 		"iii",
-		"iPi"
+		"gPg"
 	],
 	"key": {
 		"i": {
 			"item": "minecraft:iron_nugget"
+		},
+		"g": {
+			"item": "minecraft:gold_nugget"
 		},
 		"P": {
 			"item": "minecraft:gunpowder"

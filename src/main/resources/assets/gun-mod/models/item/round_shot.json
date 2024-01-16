@@ -1,6 +1,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-      "layer0": "gun-mod:item/shellshot"
+      "layer0": "gun-mod:item/round_shot"
     }
 }

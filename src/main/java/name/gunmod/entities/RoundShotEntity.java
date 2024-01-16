@@ -6,21 +6,21 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class RoundshotEntity extends AbstractShotEntity {
+public class RoundShotEntity extends AbstractShotEntity {
 
-	public RoundshotEntity(EntityType<? extends PersistentProjectileEntity> type, double x, double y, double z, World world,
-			ItemStack stack) {
+	public RoundShotEntity(EntityType<? extends PersistentProjectileEntity> type, double x, double y, double z, World world,
+						   ItemStack stack) {
 		super(type, x, y, z, world, stack);
 		// TODO Auto-generated constructor stub
 	}
 
-	public RoundshotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world,
-			ItemStack stack) {
+	public RoundShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world,
+						   ItemStack stack) {
 		super(type, owner, world, stack);
 		// TODO Auto-generated constructor stub
 	}
 
-	public RoundshotEntity(EntityType<? extends PersistentProjectileEntity> type, World world, ItemStack stack) {
+	public RoundShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world, ItemStack stack) {
 		super(type, world, stack);
 		// TODO Auto-generated constructor stub
 	}

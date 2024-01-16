@@ -3,21 +3,17 @@
 	"category": "equipment",
 	"pattern": [
 		"I",
-		"G",
 		"P"
 	],
 	"key": {
 		"I": {
 			"item": "minecraft:iron_ingot"
 		},
-		"G": {
-			"item": "minecraft:gold_ingot"
-		},
 		"P": {
 			"item": "minecraft:gunpowder"
 		}
 	},
 	"result": {
-		"item": "gun-mod:boltshot"
+		"item": "gun-mod:round_shot"
 	}
 }

@@ -13,7 +13,7 @@ public class Entities {
     public static final EntityType<BoltShotEntity> BOLT_SHOT = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(Gunmod.MOD_ID, "bolt_shot"),
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, BoltShotEntity.FACTORY)
-                    .dimensions(EntityDimensions.fixed(0.75f, 0.75f)).build()
+                    .dimensions(EntityDimensions.fixed(0.4f, 0.4f)).build()
     );;
 
     private static boolean isRegistered = false;

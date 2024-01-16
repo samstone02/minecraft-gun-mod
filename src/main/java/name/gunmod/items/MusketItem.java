@@ -18,7 +18,7 @@ public class MusketItem extends Item {
 	public static final String ITEM_ID = "musket";
 	
 	private int shotsLoaded = 1000; // TODO: DEFAULT = 0
-	private float shotStrength = 3.0f;
+	private float shotStrength = 2.0f;
 	private String loadedShotItemId = BoltshotItem.ITEM_ID; // null
 	private AbstractShotEntity shot;
 	private ItemStack shotStack; // TODO: use an item stack to store how many shots are loaded?

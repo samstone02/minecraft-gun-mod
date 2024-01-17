@@ -6,7 +6,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class RoundShotEntity extends AbstractShotEntity {
+public class RoundShotEntity extends PersistentProjectileEntity {
 
 	public RoundShotEntity(EntityType<? extends PersistentProjectileEntity> type, double x, double y, double z, World world,
 						   ItemStack stack) {
@@ -24,5 +24,4 @@ public class RoundShotEntity extends AbstractShotEntity {
 		super(type, world, stack);
 		// TODO Auto-generated constructor stub
 	}
-
 }

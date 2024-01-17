@@ -20,6 +20,7 @@ public class BoltShotEntity extends PersistentProjectileEntity {
 	}
 	private static final ItemStack DEFAULT_STACK = new ItemStack(GunModItems.BOLT_SHOT);
 	public static final EntityFactory<BoltShotEntity> FACTORY = new BoltshotEntityFactory();
+	public static final float SHOT_STRENGTH = 2.0f;
 
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world) {
 		this(type, world, DEFAULT_STACK);
@@ -44,7 +45,7 @@ public class BoltShotEntity extends PersistentProjectileEntity {
 	@Override
 	public void onCollision(HitResult hitResult) {
 		// TODO: Figure out why it's only colliding with air?
-		Gunmod.LOGGER.info("Bolt Shot collided with something!");
+//		Gunmod.LOGGER.info("Bolt Shot collided with something!");
 //		Gunmod.LOGGER.info(state.NAME);
 //		Gunmod.LOGGER.info(state.PROPERTIES);
 //		Gunmod.LOGGER.info(state.getBlock().getName().getString());

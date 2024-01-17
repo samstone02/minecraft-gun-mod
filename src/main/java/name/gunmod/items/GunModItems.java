@@ -14,10 +14,10 @@ public class GunModItems {
     public static final ShellshotItem SHELL_SHOT = new ShellshotItem(new FabricItemSettings());
 
     public static void registerAll(String modId) {
-        Registry.register(Registries.ITEM, new Identifier(modId, MusketItem.ITEM_ID), MUSKET);
         Registry.register(Registries.ITEM, new Identifier(modId, BoltshotItem.ITEM_ID), BOLT_SHOT);
         Registry.register(Registries.ITEM, new Identifier(modId, RoundshotItem.ITEM_ID), ROUND_SHOT);
         Registry.register(Registries.ITEM, new Identifier(modId, ShellshotItem.ITEM_ID), SHELL_SHOT);
+        Registry.register(Registries.ITEM, new Identifier(modId, MusketItem.ITEM_ID), MUSKET);
 
         // Creative Inventory Groups
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> entries.add(MUSKET));

@@ -14,6 +14,11 @@ public class Entities {
             Registries.ENTITY_TYPE, new Identifier(Gunmod.MOD_ID, "bolt_shot"),
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, BoltShotEntity.FACTORY)
                     .dimensions(EntityDimensions.fixed(0.4f, 0.4f)).build()
+    );
+    public static final EntityType<ShellShotPelletEntity> SHELL_SHOT_PELLET = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(Gunmod.MOD_ID, "shell_shot_pellet"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, ShellShotPelletEntity.FACTORY)
+                    .dimensions(EntityDimensions.fixed(0.2f, 0.2f)).build()
     );;
 
     private static boolean isRegistered = false;

@@ -18,7 +18,7 @@ public class BoltshotItem extends Item implements MusketShootable {
 	public ProjectileEntity onShoot(World world, LivingEntity owner) {
 		BoltShotEntity shot = new BoltShotEntity(Entities.BOLT_SHOT, owner, world);
 		shot.setPos(owner.getX(), owner.getEyeY() - 0.15f, owner.getZ());
-		shot.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0.0f, BoltShotEntity.SHOT_STRENGTH, 1.0f);
+		shot.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0.0f, BoltShotEntity.SHOT_SPEED, 1.0f);
 		world.spawnEntity(shot);
 		return shot;
 	}

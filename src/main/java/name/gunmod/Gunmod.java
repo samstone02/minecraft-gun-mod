@@ -23,9 +23,6 @@ public class Gunmod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final String MOD_ID = "gun-mod";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
-	public static final DefaultParticleType ROUND_SHOT_PARTICLE = FabricParticleTypes.simple();
-	
     @Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-
@@ -37,7 +34,6 @@ public class Gunmod implements ModInitializer {
 
 		GunModItems.registerAll(MOD_ID);
 		Entities.registerAll(MOD_ID);
-
-		Registry.register(Registries.PARTICLE_TYPE, new Identifier(MOD_ID, "round_shot"), ROUND_SHOT_PARTICLE);
+		Particles.registerAll(MOD_ID);
 	}
 }

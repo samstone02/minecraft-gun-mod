@@ -20,7 +20,7 @@ public class BoltShotEntity extends PersistentProjectileEntity {
 	}
 	private static final ItemStack DEFAULT_STACK = new ItemStack(GunModItems.BOLT_SHOT);
 	public static final EntityFactory<BoltShotEntity> FACTORY = new BoltshotEntityFactory();
-	public static final float SHOT_STRENGTH = 2.0f;
+	public static final float SHOT_SPEED = 2.0f;
 
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world) {
 		this(type, world, DEFAULT_STACK);

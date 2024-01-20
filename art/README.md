@@ -1,0 +1,1 @@
+The art folder contains all the art "source" files. Do not place art source files into the "src" directory! Src is used only for files needed to compile or run the mod.

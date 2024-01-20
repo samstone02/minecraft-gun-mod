@@ -1,12 +1,8 @@
 package name.gunmod.entities;
 
 import name.gunmod.items.GunModItems;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -15,7 +11,6 @@ public class ShellShotPelletEntity extends ThrownEntity {
 	@Override
 	protected void initDataTracker() {
 		// Thrown Entities do not need data trackers
-		SnowballEntity snowballEntity = null;
 	}
 
 	public static class ShellShotPelletEntityFactory implements EntityType.EntityFactory<ShellShotPelletEntity> {
@@ -26,7 +21,7 @@ public class ShellShotPelletEntity extends ThrownEntity {
 	}
 	private static final ItemStack DEFAULT_STACK = new ItemStack(GunModItems.BOLT_SHOT);
 	public static final ShellShotPelletEntityFactory FACTORY = new ShellShotPelletEntityFactory();
-	public static final float SHOT_STRENGTH = 1.0f;
+	public static final float SHOT_SPEED = 1.0f;
 
 	public ShellShotPelletEntity(EntityType<? extends ThrownEntity> type, World world) {
 		super(type, world);

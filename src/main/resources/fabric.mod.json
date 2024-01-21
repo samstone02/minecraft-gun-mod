@@ -1,34 +1,26 @@
 {
 	"schemaVersion": 1,
-	"id": "gun-mod",
+	"id": "musket_mod",
 	"version": "${version}",
-	"name": "gun-mod",
+	"name": "Musket Mod",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Me!"
+		"Sam Stone"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/samstone02/minecraft-gun-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/gun-mod/icon.png",
+	"icon": "assets/musket_mod/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"name.gunmod.Gunmod"
+			"name.musket_mod.MusketMod"
 		],
 		"client": [
-			"name.gunmod.GunmodClient"
+			"name.musket_mod.MusketModClient"
 		]
 	},
-	"mixins": [
-		"gun-mod.mixins.json",
-		{
-			"config": "gun-mod.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"fabricloader": ">=0.15.3",
 		"minecraft": "~1.20.4",

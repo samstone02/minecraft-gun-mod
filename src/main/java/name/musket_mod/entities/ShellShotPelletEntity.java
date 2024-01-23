@@ -1,19 +1,23 @@
 package name.musket_mod.entities;
 
+import name.musket_mod.DamageTypes;
 import name.musket_mod.Entities;
 import name.musket_mod.Items;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 
 public class ShellShotPelletEntity extends ThrownItemEntity implements MusketShotEntity {
 	public static final ShellShotPelletEntityFactory FACTORY = new ShellShotPelletEntityFactory();
-	public static final float SHOT_SPEED = 1.0f;
+	public static final float SHOT_SPEED = 4.0f;
+	public static final float BASE_DAMAGE_VALUE = 4f;
 	public ShellShotPelletEntity(EntityType<? extends ThrownItemEntity> type, World world) {
 		super(type, world);
 	}
@@ -30,6 +34,13 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 		}
 		super.onCollision(hitResult);
 		this.discard();
+	}
+	@Override
+	public void onEntityHit(EntityHitResult hitResult) {
+		super.onEntityHit(hitResult);
+		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
+		hitResult.getEntity().damage(source, BASE_DAMAGE_VALUE);
+		hitResult.getEntity().onDamaged(source);
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {

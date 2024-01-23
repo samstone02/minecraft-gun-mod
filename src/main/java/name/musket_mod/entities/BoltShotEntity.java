@@ -1,12 +1,16 @@
 package name.musket_mod.entities;
 
+import name.musket_mod.DamageTypes;
 import name.musket_mod.Items;
+import name.musket_mod.MusketMod;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EntityType.EntityFactory;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -16,7 +20,8 @@ public class BoltShotEntity extends PersistentProjectileEntity
 		implements MusketShotEntity {
 	private static final ItemStack DEFAULT_STACK = new ItemStack(Items.BOLT_SHOT);
 	public static final EntityFactory<BoltShotEntity> FACTORY = new Factory();
-	public static final float SHOT_SPEED = 2.0f;
+	public static final float SHOT_SPEED = 6.0f;
+	public static final float BASE_DAMAGE_VALUE = 12f;
 	private int durability = 5; // a bolt's durability equals how many "fragile" blocks (glass, glowstone) it can break.
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world) {
 		this(type, world, DEFAULT_STACK);
@@ -49,7 +54,10 @@ public class BoltShotEntity extends PersistentProjectileEntity
 	}
 	@Override
 	public void onEntityHit(EntityHitResult hitResult) {
-
+		super.onEntityHit(hitResult);
+		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
+		hitResult.getEntity().damage(source, BASE_DAMAGE_VALUE);
+		hitResult.getEntity().onDamaged(source);
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {

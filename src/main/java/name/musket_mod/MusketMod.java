@@ -2,6 +2,8 @@ package name.musket_mod;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +25,11 @@ public class MusketMod implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello, " + MOD_ID + "!");
+		LOGGER.info("'Musket Mod' comes in with *bang*!");
 
 		Items.registerAll(MOD_ID);
 		Entities.registerAll(MOD_ID);
+
+
 	}
 }

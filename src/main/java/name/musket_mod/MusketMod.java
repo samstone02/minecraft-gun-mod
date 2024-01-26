@@ -29,7 +29,5 @@ public class MusketMod implements ModInitializer {
 
 		Items.registerAll(MOD_ID);
 		Entities.registerAll(MOD_ID);
-
-
 	}
 }

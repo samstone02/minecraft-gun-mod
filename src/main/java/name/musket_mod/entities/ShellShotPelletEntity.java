@@ -3,6 +3,7 @@ package name.musket_mod.entities;
 import name.musket_mod.DamageTypes;
 import name.musket_mod.Entities;
 import name.musket_mod.Items;
+import name.musket_mod.MusketMod;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -38,9 +39,15 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 	@Override
 	public void onEntityHit(EntityHitResult hitResult) {
 		super.onEntityHit(hitResult);
+		if (!(hitResult.getEntity() instanceof LivingEntity)) {
+			return;
+		}
+
+		LivingEntity living = (LivingEntity)hitResult.getEntity();
+		living.setHealth(living.getHealth() - BASE_DAMAGE_VALUE);
 		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
-		hitResult.getEntity().damage(source, BASE_DAMAGE_VALUE);
-		hitResult.getEntity().onDamaged(source);
+		living.onDamaged(source);
+		MusketMod.LOGGER.info("health left" + ((LivingEntity)hitResult.getEntity()).getHealth());
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {

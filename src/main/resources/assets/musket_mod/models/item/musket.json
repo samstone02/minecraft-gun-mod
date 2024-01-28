@@ -1,6 +1,28 @@
 {
-    "parent": "item/handheld",
-    "textures": {
-      "layer0": "musket_mod:item/musket"
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "musket_mod:item/musket"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [ -90, 260, -40 ],
+      "translation": [ -1, 1, 0 ],
+      "scale": [ 0.9, 0.9, 0.9 ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [ -90, -280, 40 ],
+      "translation": [ -1, 1, 0 ],
+      "scale": [ 0.9, 0.9, 0.9 ]
+    },
+    "firstperson_righthand": {
+      "rotation": [ 0, -90, 25 ],
+      "translation": [ 1.13, 4.15, 1.13],
+      "scale": [ 0.68, 0.68, 0.68 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [ 0, 90, -25 ],
+      "translation": [ 1.13, 4.15, 1.13],
+      "scale": [ 0.68, 0.68, 0.68 ]
     }
   }
+}

@@ -47,7 +47,6 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 		living.setHealth(living.getHealth() - BASE_DAMAGE_VALUE);
 		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
 		living.onDamaged(source);
-		MusketMod.LOGGER.info("health left" + ((LivingEntity)hitResult.getEntity()).getHealth());
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {

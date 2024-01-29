@@ -1,6 +1,6 @@
 package name.musket_mod;
 
-import name.musket_mod.renderers.*;
+import name.musket_mod.renderers.BoltShotEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;

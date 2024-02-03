@@ -2,6 +2,7 @@ package name.musket_mod.items;
 
 import name.musket_mod.Items;
 import name.musket_mod.MusketMod;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,25 +23,88 @@ public class MusketItem extends Item {
 	public static final String ITEM_ID = "musket";
 	private final float SCARE_RADIUS = 10f;
 	private ItemStack shotStack = ItemStack.EMPTY;
+	private final int SHOOT_ANIMATION_TICKS = 20;
+	private final int RELOAD_ANIMATION_TICKS = 70;
+	private int currentAnimationTicks = 0;
+	private int state = 0; // 0 = 1 none, 1 = shooting, 2 = reloading
 	public MusketItem(Settings settings) {
 		super(settings);
 	}
 	@Override
 	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.SPYGLASS;
+		return UseAction.NONE;
+	}
+	public int getState() {
+		return state;
+	}
+	@Override
+	public int getMaxUseTime(ItemStack stack) {
+		if (state == 1) {
+			return SHOOT_ANIMATION_TICKS;
+		}
+		else if (state == 2) {
+			return RELOAD_ANIMATION_TICKS;
+		}
+		return 0;
+	}
+	public int getCurrentAnimationTime() {
+		return currentAnimationTicks;
+	}
+	public int shotsLoaded() {
+		return shotStack.getCount();
+	}
+	/**
+	 * 	@summary Tick called by held item renderer mixin for animation purposes
+	 */
+	public void animationTick() {
+		if (state == 1 && currentAnimationTicks <= 0) {
+			state = 0;
+			currentAnimationTicks = 0;
+		}
+		if (currentAnimationTicks > 0) {;
+			currentAnimationTicks--;
+		}
 	}
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-		if (world.isClient) {
-			return TypedActionResult.pass(player.getStackInHand(hand));
+		if (world.isClient) { return TypedActionResult.pass(player.getStackInHand(hand)); }
+
+		if (state == 1) {
+			MusketMod.LOGGER.info("animation shoot: " + state);
+			player.setCurrentHand(hand);
+			return TypedActionResult.consume(player.getStackInHand(hand));
+		}
+		if (state == 2) {
+			MusketMod.LOGGER.info("animation reload: " + state);
+			player.setCurrentHand(hand);
+			return TypedActionResult.consume(player.getStackInHand(hand));
 		}
 
     	if (shotStack.getCount() > 0) {
+			MusketMod.LOGGER.info("shoot: " + state);
+			state = 1;
+			currentAnimationTicks = SHOOT_ANIMATION_TICKS;
 			return shoot(world, player, hand);
     	}
-		return reload(player, hand);
-    }
 
+		MusketMod.LOGGER.info("reload: " + state);
+		state = 2;
+		currentAnimationTicks = RELOAD_ANIMATION_TICKS;
+		player.setCurrentHand(hand);
+		return TypedActionResult.consume(player.getStackInHand(hand));
+    }
+	@Override
+	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+		if (world.isClient) { return; }
+
+		if (state == 2) {
+			if (currentAnimationTicks <= 0) {
+				// TODO: play reload sound...
+				reload((PlayerEntity) user, user.getActiveHand());
+			}
+			state = 0;
+		}
+	}
 	private TypedActionResult<ItemStack> shoot(World world, PlayerEntity player, Hand hand) {
 		MusketShootable shot = nextShot();
 		shot.onShoot(world, player);
@@ -63,9 +127,9 @@ public class MusketItem extends Item {
 			animal.setAttacker(player);
 		}
 
+		player.setCurrentHand(hand);
 		return TypedActionResult.consume(player.getStackInHand(hand));
 	}
-
 	private TypedActionResult<ItemStack> reload(PlayerEntity player, Hand hand) {
 		// handle shot in offhand
 		if (player.getStackInHand(Hand.OFF_HAND).isOf(Items.BOLT_SHOT)
@@ -75,6 +139,8 @@ public class MusketItem extends Item {
 			ItemStack offHandStack = player.getStackInHand(Hand.OFF_HAND);
 			offHandStack.decrement(1);
 			shotStack = new ItemStack(offHandStack.getItem(), 1);
+
+			player.setCurrentHand(hand);
 			return TypedActionResult.consume(player.getStackInHand(hand));
 		}
 
@@ -95,13 +161,13 @@ public class MusketItem extends Item {
 			MusketMod.LOGGER.info(Integer.toString(minIndex));
 			shotStack = player.getInventory().removeStack(minIndex, 1);
 			player.playSound(SoundEvents.BLOCK_WOOL_BREAK, 1.0F, 1.0F);
+
+			player.setCurrentHand(hand);
 			return TypedActionResult.consume(player.getStackInHand(hand));
 		}
 
-		// player.playSound(SoundEvents.BLOCK_WOOL_BREAK, 1.0F, 1.0F);
 		return TypedActionResult.fail(player.getStackInHand(hand));
 	}
-
 	private MusketShootable nextShot() {
 		MusketShootable shot = (MusketShootable)shotStack.getItem();
 		shotStack.decrement(1);

@@ -3,14 +3,13 @@
 	"id": "musket_mod",
 	"version": "${version}",
 	"name": "Musket Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Add some firepower to your Minecraft world with the Musket Mod! This focused Vanilla+ mod adds the musket alongside 3 ammo types and can slide nicely into any mod pack.",
 	"authors": [
 		"Sam Stone"
 	],
 	"contact": {
 		"sources": "https://github.com/samstone02/minecraft-gun-mod"
 	},
-	"license": "CC0-1.0",
 	"icon": "assets/musket_mod/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -21,6 +20,9 @@
 			"name.musket_mod.MusketModClient"
 		]
 	},
+	"mixins": [
+		"musket_mod.client.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=0.15.3",
 		"minecraft": "~1.20.4",

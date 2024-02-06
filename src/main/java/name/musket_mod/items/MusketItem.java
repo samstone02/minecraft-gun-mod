@@ -21,10 +21,8 @@ import java.util.Objects;
 
 public class MusketItem extends Item {
 	public static final String ITEM_ID = "musket";
-	private final float SCARE_RADIUS = 10f;
+	private static final float SCARE_RADIUS = 10f;
 	private ItemStack shotStack = ItemStack.EMPTY;
-	private final int SHOOT_ANIMATION_TICKS = 20;
-	private final int RELOAD_ANIMATION_TICKS = 70;
 	private int currentAnimationTicks = 0;
 	private int state = 0; // 0 = 1 none, 1 = shooting, 2 = reloading
 	public MusketItem(Settings settings) {
@@ -37,6 +35,8 @@ public class MusketItem extends Item {
 	public int getState() {
 		return state;
 	}
+	private static final int SHOOT_ANIMATION_TICKS = 25;
+	private static final int RELOAD_ANIMATION_TICKS = 160;
 	@Override
 	public int getMaxUseTime(ItemStack stack) {
 		if (state == 1) {
@@ -50,9 +50,6 @@ public class MusketItem extends Item {
 	public int getCurrentAnimationTime() {
 		return currentAnimationTicks;
 	}
-	public int shotsLoaded() {
-		return shotStack.getCount();
-	}
 	/**
 	 * 	@summary Tick called by held item renderer mixin for animation purposes
 	 */
@@ -61,7 +58,7 @@ public class MusketItem extends Item {
 			state = 0;
 			currentAnimationTicks = 0;
 		}
-		if (currentAnimationTicks > 0) {;
+		if (currentAnimationTicks > 0) {
 			currentAnimationTicks--;
 		}
 	}
@@ -130,7 +127,7 @@ public class MusketItem extends Item {
 		player.setCurrentHand(hand);
 		return TypedActionResult.consume(player.getStackInHand(hand));
 	}
-	private TypedActionResult<ItemStack> reload(PlayerEntity player, Hand hand) {
+	private void reload(PlayerEntity player, Hand hand) {
 		// handle shot in offhand
 		if (player.getStackInHand(Hand.OFF_HAND).isOf(Items.BOLT_SHOT)
 				|| player.getStackInHand(Hand.OFF_HAND).isOf(Items.ROUND_SHOT)
@@ -141,7 +138,7 @@ public class MusketItem extends Item {
 			shotStack = new ItemStack(offHandStack.getItem(), 1);
 
 			player.setCurrentHand(hand);
-			return TypedActionResult.consume(player.getStackInHand(hand));
+			return;
 		}
 
 		List<Integer> list = new ArrayList<>();
@@ -152,7 +149,7 @@ public class MusketItem extends Item {
 
 		if (list.isEmpty()) {
 			MusketMod.LOGGER.info("no shots in inventory.");
-			return TypedActionResult.fail(player.getStackInHand(hand));
+			return;
 		}
 
 		int minIndex = Collections.min(list);
@@ -163,10 +160,7 @@ public class MusketItem extends Item {
 			player.playSound(SoundEvents.BLOCK_WOOL_BREAK, 1.0F, 1.0F);
 
 			player.setCurrentHand(hand);
-			return TypedActionResult.consume(player.getStackInHand(hand));
 		}
-
-		return TypedActionResult.fail(player.getStackInHand(hand));
 	}
 	private MusketShootable nextShot() {
 		MusketShootable shot = (MusketShootable)shotStack.getItem();

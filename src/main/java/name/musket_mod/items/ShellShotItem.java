@@ -24,4 +24,8 @@ public class ShellShotItem extends Item implements MusketShootable {
 		return null;
 		// TODO: Why isn't the shell shot working properly? It seems like only one entity is colliding with enemies...
 	}
+	@Override
+	public String getId() {
+		return ITEM_ID;
+	}
 }

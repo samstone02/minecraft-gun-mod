@@ -1,12 +1,10 @@
 {
 	"_comment": "Tooltips are not yet working. Need to override appendToolTip in the item class.",
 	"item.musket_mod.musket": "Musket",
-	"item.musket_mod.musket.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!",
 	"item.musket_mod.bolt_shot": "Bolt Shot",
-	"item.musket_mod.bolt_shot.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!",
 	"item.musket_mod.round_shot": "Round Shot",
-	"item.musket_mod.round_shot.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!",
 	"item.musket_mod.shell_shot": "Shell Shot",
-	"item.musket_mod.shell_shot.tooltip": "FIND THE TOOLTIP IN TRANSLATIONS FOLDER!"
+	"tooltip.musket_mod.musket.empty": "Empty",
+	"tooltip.musket_mod.musket.shots_loaded": "Loaded"
 }
 

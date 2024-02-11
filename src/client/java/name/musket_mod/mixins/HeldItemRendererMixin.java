@@ -31,12 +31,16 @@ public class HeldItemRendererMixin {
                                       VertexConsumerProvider vertexConsumers, int light, CallbackInfo callable) {
         if (item.getItem() == Items.MUSKET) {
             MusketItem musket = (MusketItem) item.getItem();
-            if (musket.getState() == 1) {
+            ItemStack stack = player.getStackInHand(hand);
+
+            if (musket.getState(stack) == 1) {
                 shootAnimation(item, musket, matrices);
-            } else if (musket.getState() == 2) {
+            }
+            else if (musket.getState(stack) == 2) {
                 reloadAnimation(item, musket, matrices);
             }
-            musket.animationTick();
+
+            musket.animationTick(stack);
         }
     }
 

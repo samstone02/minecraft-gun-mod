@@ -9,4 +9,5 @@ public interface MusketShootable {
 		// TODO: Add common shot functionality
 		return null;
 	}
+	String getId();
 }

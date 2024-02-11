@@ -19,4 +19,8 @@ public class BoltShotItem extends Item implements MusketShootable {
 		world.spawnEntity(shot);
 		return shot;
 	}
+	@Override
+	public String getId() {
+		return ITEM_ID;
+	}
 }

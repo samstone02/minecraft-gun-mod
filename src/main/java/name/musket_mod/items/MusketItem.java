@@ -197,19 +197,11 @@ public class MusketItem extends Item {
 
 		shotStack.decrement(1);
 
-//		ItemStack musketStack = player.getStackInHand(hand);
-//		ensureNbt(musketStack);
-//		MusketItem musket = (MusketItem) musketStack.getItem();
-
 		NbtCompound nbt = player.getStackInHand(hand).getNbt();
 		nbt.putInt(NBT.SHOTS_LOADED, 1);
 		nbt.putString(NBT.LOADED_SHOT_ITEM_ID, ((MusketShootable) shotStack.getItem()).getId());
 	}
 	private MusketShootable nextShot(PlayerEntity player, Hand hand) {
-
-		// TODO: why isn't this working? I think it's because musket_mod.loaded_shot_id is never set. So fix that.
-		//  Maybe with an "on load" method for the item?
-
 		if (!player.getStackInHand(hand).hasNbt()) {
 			MusketMod.LOGGER.error("somehow we try to shoot the musket with no bullets loaded");
 			return null;
@@ -236,7 +228,6 @@ public class MusketItem extends Item {
 			return -1;
 		}
 
-		// TODO: I'm pretty sure it's broken because this isn't finding the item in the inventory?
 		List<Integer> list = new ArrayList<>();
 		list.add(player.getInventory().indexOf(new ItemStack(Items.BOLT_SHOT)));
 		list.add(player.getInventory().indexOf(new ItemStack(Items.ROUND_SHOT)));

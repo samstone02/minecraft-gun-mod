@@ -10,6 +10,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
@@ -27,125 +29,130 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MusketItem extends Item {
+	//<editor-fold desc="Static members">
 	public static final String ITEM_ID = "musket";
 	private static final float SCARE_RADIUS = 10f;
-	private int currentAnimationTicks = 0;
 	private static final int SHOOT_ANIMATION_TICKS = 25;
-	private static final int RELOAD_ANIMATION_TICKS = 160;
+	private static final int RELOAD_ANIMATION_TICKS = 140;
 	private static final class NBT {
 		private static final String SHOTS_LOADED = MusketMod.MOD_ID + ".shots_loaded";
 		private static final String LOADED_SHOT_ITEM_ID = MusketMod.MOD_ID + ".loaded_shot_item_id";
-		private static final String USE_STATE = MusketMod.MOD_ID + ".use_state"; // 0 = 1 none, 1 = shooting, 2 = reloading
+		private static final String USE_STATE = MusketMod.MOD_ID + ".use_state";
+		private static class UseStates {
+			private static final String IDLE = "IDLE";
+			private static final String RELOADING = "RELOADING";
+			private static final String CAN_RELOAD = "CAN_RELOAD";
+			private static final String SHOOTING = "SHOOTING";
+		}
 	}
+	//</editor-fold>
+	//<editor-fold desc="Constructors">
 	public MusketItem(Settings settings) {
 		super(settings);
 	}
+	//</editor-fold>
+	//<editor-fold desc="Getters">
 	@Override
 	public UseAction getUseAction(ItemStack stack) {
 		return UseAction.NONE;
 	}
 	@Override
 	public int getMaxUseTime(ItemStack stack) {
-		ensureNbt(stack);
-		int state = stack.getNbt().getInt(NBT.USE_STATE);
+		NbtCompound nbt = stack.getOrCreateNbt();
+		String state = nbt.getString(NBT.USE_STATE);
 
-		if (state == 1) {
+		if (state.equals(NBT.UseStates.SHOOTING)) {
+			MusketMod.LOGGER.info(":: getMaxUseTime. state = " + state);
 			return SHOOT_ANIMATION_TICKS;
 		}
-		else if (state == 2) {
+		else if (state.equals(NBT.UseStates.RELOADING)) {
+			MusketMod.LOGGER.info(":: getMaxUseTime. state = " + state);
 			return RELOAD_ANIMATION_TICKS;
 		}
 		return 0;
 	}
-	public int getState(ItemStack stack) {
-		ensureNbt(stack);
-		return stack.getNbt().getInt(NBT.USE_STATE);
+	public String getState(ItemStack stack) {
+		NbtCompound nbt = stack.getOrCreateNbt();
+		return nbt.getString(NBT.USE_STATE);
 	}
-	public int getCurrentAnimationTime() {
-		return currentAnimationTicks;
-	}
-	/**
-	 * 	@summary Tick called by held item renderer mixin for animation purposes
-	 */
-	public void animationTick(ItemStack stack) {
-		ensureNbt(stack);
-		int state = stack.getNbt().getInt(NBT.USE_STATE);
-
-		if (state == 1 && currentAnimationTicks <= 0) {
-			NbtCompound nbt = stack.getNbt();
-			nbt.putInt(NBT.USE_STATE, 0);
-			MusketMod.LOGGER.info("we have reset animation state to zero.");
-			currentAnimationTicks = 0;
-		}
-		else if (currentAnimationTicks > 0) {
-			currentAnimationTicks--;
-		}
-	}
+	//</editor-fold>
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-		if (world.isClient) { return TypedActionResult.pass(player.getStackInHand(hand)); }
+		super.use(world, player, hand);
+		if (world.isClient) {
+			return TypedActionResult.pass(player.getStackInHand(hand));
+		}
 
 		ItemStack stack = player.getStackInHand(hand);
-		ensureNbt(stack);
-		int state = stack.getNbt().getInt(NBT.USE_STATE);
-		MusketMod.LOGGER.info("USE STATE: " + state);
+		NbtCompound nbt = stack.getOrCreateNbt();
+		String state = nbt.getString(NBT.USE_STATE);
 
-		if (state == 1) {
-			MusketMod.LOGGER.info("animation shoot: " + state);
+		if (state.equals(NBT.UseStates.CAN_RELOAD)
+				|| state.equals(NBT.UseStates.SHOOTING)
+				|| state.equals(NBT.UseStates.RELOADING)) {
+			/* Prevent other behavior when shooting or reloading */
+			MusketMod.LOGGER.info("skipping use() since in state: " + state);
 			player.setCurrentHand(hand);
-			return TypedActionResult.consume(player.getStackInHand(hand));
-		}
-		if (state == 2) {
-			MusketMod.LOGGER.info("animation reload: " + state);
-			player.setCurrentHand(hand);
-			return TypedActionResult.consume(player.getStackInHand(hand));
+			return TypedActionResult.fail(player.getStackInHand(hand));
 		}
 
-		NbtCompound nbt = player.getStackInHand(hand).getNbt();
-		if (nbt == null || nbt.getInt(NBT.SHOTS_LOADED) <= 0) {
+		if (nbt.getInt(NBT.SHOTS_LOADED) <= 0) {
 			int index = getShotIndexFromInventory(player, hand);
-			MusketMod.LOGGER.info("index: " + index);
 			if (index == -2) {
+				/* No ammo found */
 				// TODO: play unable to reload sound
+
 				player.setCurrentHand(hand);
 				return TypedActionResult.fail(player.getStackInHand(hand));
 			}
 
 			/* Start reloading */
-			MusketMod.LOGGER.info("reload: " + state);
-			stack.getNbt().putInt(NBT.USE_STATE, 2);
-			currentAnimationTicks = RELOAD_ANIMATION_TICKS;
+			nbt.put(NBT.USE_STATE, NbtString.of(NBT.UseStates.RELOADING));
 
+			// setCurrentHand is important because it sets the useTimeLeft.
 			player.setCurrentHand(hand);
 			return TypedActionResult.consume(player.getStackInHand(hand));
 		}
 
 		/* Shoot the Musket */
 		shoot(world, player, hand);
-
-		MusketMod.LOGGER.info("shoot: " + state);
-		stack.getNbt().putInt(NBT.USE_STATE, 1);
-		currentAnimationTicks = SHOOT_ANIMATION_TICKS;
+		nbt.put(NBT.USE_STATE, NbtString.of(NBT.UseStates.SHOOTING));
 
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(() -> stack.getNbt().putInt(NBT.USE_STATE, 0), SHOOT_ANIMATION_TICKS, TimeUnit.MILLISECONDS);
+		scheduler.schedule(() -> nbt.put(NBT.USE_STATE, NbtInt.of(0)), SHOOT_ANIMATION_TICKS * 50, TimeUnit.MILLISECONDS);
 
+		// setCurrentHand is important because it sets the useTimeLeft.
 		player.setCurrentHand(hand);
 		return TypedActionResult.consume(player.getStackInHand(hand));
-    }
+	}
+	@Override
+	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+		super.usageTick(world, user, stack, remainingUseTicks);
+		if (world.isClient) { return; }
+
+		NbtCompound nbt = stack.getOrCreateNbt();
+		String state = nbt.getString(NBT.USE_STATE);
+
+		if (state.equals(NBT.UseStates.SHOOTING) && remainingUseTicks <= 1) {
+			nbt.put(NBT.USE_STATE, NbtString.of(NBT.UseStates.IDLE));
+		}
+		else if (state.equals(NBT.UseStates.RELOADING) && remainingUseTicks <= 1) {
+			nbt.put(NBT.USE_STATE, NbtString.of(NBT.UseStates.CAN_RELOAD));
+		}
+	}
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
 		if (world.isClient) { return; }
 
-		ensureNbt(stack);
-		int state = stack.getNbt().getInt(NBT.USE_STATE);
+		NbtCompound nbt = stack.getOrCreateNbt();
+		String state = nbt.getString(NBT.USE_STATE);
 
-		if (state == 2) {
-			if (currentAnimationTicks <= 0) {
-				// TODO: play reload sound...
-				reload((PlayerEntity) user, user.getActiveHand());
-			}
-			stack.getNbt().putInt(NBT.USE_STATE, 0);
+		if (state.equals(NBT.UseStates.CAN_RELOAD)) {
+			/* Load shots into Musket */
+			// TODO: play reload sound...
+
+			reload((PlayerEntity) user, user.getActiveHand());
+			nbt.put(NBT.USE_STATE, NbtString.of(NBT.UseStates.IDLE));
 		}
 	}
 	private void shoot(World world, PlayerEntity player, Hand hand) {
@@ -157,9 +164,13 @@ public class MusketItem extends Item {
 		shot.onShoot(world, player);
 
 		ItemStack itemStack = player.getStackInHand(hand);
-		ensureNbt(itemStack);
-		itemStack.getNbt().putInt(NBT.SHOTS_LOADED, itemStack.getNbt().getInt(NBT.SHOTS_LOADED) - 1);
-		itemStack.getNbt().putString(NBT.LOADED_SHOT_ITEM_ID, "");
+		NbtCompound nbt = itemStack.getOrCreateNbt();
+
+		int shotsLeft = nbt.getInt(NBT.SHOTS_LOADED) - 1;
+		nbt.put(NBT.SHOTS_LOADED, NbtInt.of(shotsLeft));
+		if (shotsLeft <= 0) {
+			nbt.remove(NBT.LOADED_SHOT_ITEM_ID);
+		}
 
 		float pitch = (float)(Math.PI / 180.0) * player.getPitch();
 		float yaw = (float)(Math.PI / 180.0) * player.getHeadYaw();
@@ -178,8 +189,6 @@ public class MusketItem extends Item {
 		for (AnimalEntity animal : animals) {
 			animal.setAttacker(player);
 		}
-
-		player.setCurrentHand(hand);
 	}
 	private void reload(PlayerEntity player, Hand hand) {
 		int index = getShotIndexFromInventory(player, hand);
@@ -197,9 +206,9 @@ public class MusketItem extends Item {
 
 		shotStack.decrement(1);
 
-		NbtCompound nbt = player.getStackInHand(hand).getNbt();
-		nbt.putInt(NBT.SHOTS_LOADED, 1);
-		nbt.putString(NBT.LOADED_SHOT_ITEM_ID, ((MusketShootable) shotStack.getItem()).getId());
+		NbtCompound nbt = player.getStackInHand(hand).getOrCreateNbt();
+		nbt.put(NBT.SHOTS_LOADED, NbtInt.of(1));
+		nbt.put(NBT.LOADED_SHOT_ITEM_ID, NbtString.of(((MusketShootable) shotStack.getItem()).getId()));
 	}
 	private MusketShootable nextShot(PlayerEntity player, Hand hand) {
 		if (!player.getStackInHand(hand).hasNbt()) {
@@ -207,7 +216,7 @@ public class MusketItem extends Item {
 			return null;
 		}
 
-		NbtCompound nbt = player.getStackInHand(hand).getNbt();
+		NbtCompound nbt = player.getStackInHand(hand).getOrCreateNbt();
 		String loadedShotId = nbt.getString(NBT.LOADED_SHOT_ITEM_ID);
 		Item item = Registries.ITEM.get(new Identifier(MusketMod.MOD_ID, loadedShotId));
 
@@ -242,7 +251,6 @@ public class MusketItem extends Item {
 		int minIndex = Collections.min(list);
 
 		if (minIndex > PlayerInventory.NOT_FOUND) {
-			player.setCurrentHand(hand);
 			return minIndex;
 		}
 
@@ -250,28 +258,16 @@ public class MusketItem extends Item {
 	}
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-		NbtCompound nbt = stack.getNbt();
-		if (nbt == null) {
-			tooltip.add(Text.translatable("tooltip.musket_mod.musket.empty").formatted(Formatting.WHITE));
-			return;
-		}
+		NbtCompound nbt = stack.getOrCreateNbt();
 
 		int shotsLoaded = nbt.getInt(NBT.SHOTS_LOADED);
 		if (shotsLoaded <= 0) {
-			tooltip.add(Text.translatable("tooltip.musket_mod.musket.empty").formatted(Formatting.WHITE));
+			tooltip.add(Text.translatable("tooltip.musket_mod.musket.not_loaded").formatted(Formatting.BLUE));
 		}
 		else {
 			String loadedShotId = nbt.getString(NBT.LOADED_SHOT_ITEM_ID);
 			String shotTranslationKey = Registries.ITEM.get(new Identifier(MusketMod.MOD_ID, loadedShotId)).getTranslationKey();
-
-			tooltip.add(Text.translatable("tooltip.musket_mod.musket.shots_loaded").formatted(Formatting.WHITE));
-			tooltip.add(Text.literal(nbt.getInt("musket_mod.shots_loaded") + "").formatted(Formatting.RED));
-			tooltip.add(Text.translatable(shotTranslationKey).formatted(Formatting.WHITE));
-		}
-	}
-	private void ensureNbt(ItemStack stack) {
-		if (!stack.hasNbt()) {
-			stack.setNbt(new NbtCompound());
+			tooltip.add(Text.translatable("tooltip.musket_mod.musket.is_loaded", shotsLoaded, shotTranslationKey, shotsLoaded > 1 ? "s" : "").formatted(Formatting.BLUE));
 		}
 	}
 }

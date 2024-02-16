@@ -4,7 +4,7 @@
 	"item.musket_mod.bolt_shot": "Bolt Shot",
 	"item.musket_mod.round_shot": "Round Shot",
 	"item.musket_mod.shell_shot": "Shell Shot",
-	"tooltip.musket_mod.musket.empty": "Empty",
-	"tooltip.musket_mod.musket.shots_loaded": "Loaded"
+	"tooltip.musket_mod.musket.not_loaded": "Unloaded",
+	"tooltip.musket_mod.musket.is_loaded": "%d %s%s loaded"
 }
 

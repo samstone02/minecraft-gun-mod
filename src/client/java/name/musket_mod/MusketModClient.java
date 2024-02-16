@@ -2,7 +2,9 @@ package name.musket_mod;
 
 import name.musket_mod.renderers.BoltShotEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 
 // @Environment(EnvType.CLIENT) // NVM this breaks the code for some reason

@@ -7,7 +7,9 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -15,6 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HeldItemRenderer.class)
 public class HeldItemRendererMixin {
@@ -29,24 +32,22 @@ public class HeldItemRendererMixin {
     public void renderFirstPersonItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand,
                                       float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices,
                                       VertexConsumerProvider vertexConsumers, int light, CallbackInfo callable) {
-        if (item.getItem() == Items.MUSKET) {
+        if (player.isUsingItem() && item.getItem() == Items.MUSKET) {
             MusketItem musket = (MusketItem) item.getItem();
             ItemStack stack = player.getStackInHand(hand);
 
-            if (musket.getState(stack) == 1) {
-                shootAnimation(item, musket, matrices);
-            }
-            else if (musket.getState(stack) == 2) {
-                reloadAnimation(item, musket, matrices);
-            }
+            float progress = (1f * stack.getMaxUseTime() - player.getItemUseTimeLeft()) / stack.getMaxUseTime();
 
-            musket.animationTick(stack);
+            if (musket.getState(stack).equals("SHOOTING")) {
+                shootAnimation(progress, matrices);
+            }
+            else if (musket.getState(stack).equals("RELOADING")) {
+                reloadAnimation(progress, matrices);
+            }
         }
     }
 
-    public void shootAnimation(ItemStack itemStack, MusketItem musket, MatrixStack matrices) {
-        float progress = (float) (musket.getMaxUseTime(itemStack) - musket.getCurrentAnimationTime()) / musket.getMaxUseTime(itemStack);
-
+    public void shootAnimation(float progress, MatrixStack matrices) {
         if (progress < MusketAPs.RECOIL_THRESHOLD) {
             float position = progress * MusketAPs.RECOIL_TRANSLATION_CONVERSION;
             float rotation = progress * MusketAPs.RECOIL_ROTATION_CONVERSION;
@@ -61,9 +62,7 @@ public class HeldItemRendererMixin {
         }
     }
 
-    public void reloadAnimation(ItemStack itemStack, MusketItem musket, MatrixStack matrices) {
-        float progress = (float) (musket.getMaxUseTime(itemStack) - musket.getCurrentAnimationTime()) / musket.getMaxUseTime(itemStack);
-
+    public void reloadAnimation(float progress, MatrixStack matrices) {
         if (progress < MusketAPs.RELOAD_THRESHOLD) {
             float moveX = progress * MusketAPs.RELOAD_WINDUP_TRANSLATION_CONVERSION_X;
             float moveY = progress * MusketAPs.RELOAD_WINDUP_TRANSLATION_CONVERSION_Y;

@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "name.musket_mod.mixins",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"AbstractSkeletonEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

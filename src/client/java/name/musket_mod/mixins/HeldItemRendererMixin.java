@@ -46,7 +46,6 @@ public class HeldItemRendererMixin {
             }
         }
     }
-
     public void shootAnimation(float progress, MatrixStack matrices) {
         if (progress < MusketAPs.RECOIL_THRESHOLD) {
             float position = progress * MusketAPs.RECOIL_TRANSLATION_CONVERSION;
@@ -61,7 +60,6 @@ public class HeldItemRendererMixin {
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((MusketAPs.RECOIL_THRESHOLD * MusketAPs.RECOIL_ROTATION_CONVERSION) - rotation));
         }
     }
-
     public void reloadAnimation(float progress, MatrixStack matrices) {
         if (progress < MusketAPs.RELOAD_THRESHOLD) {
             float moveX = progress * MusketAPs.RELOAD_WINDUP_TRANSLATION_CONVERSION_X;

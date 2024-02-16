@@ -21,6 +21,7 @@
 		]
 	},
 	"mixins": [
+		"musket_mod.mixins.json",
 		"musket_mod.client.mixins.json"
 	],
 	"depends": {

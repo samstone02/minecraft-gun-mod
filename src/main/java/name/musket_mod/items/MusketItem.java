@@ -33,7 +33,7 @@ public class MusketItem extends Item {
 	public static final String ITEM_ID = "musket";
 	private static final float SCARE_RADIUS = 10f;
 	private static final int SHOOT_ANIMATION_TICKS = 25;
-	private static final int RELOAD_ANIMATION_TICKS = 140;
+	public static final int RELOAD_ANIMATION_TICKS = 120;
 	private static final class NBT {
 		private static final String SHOTS_LOADED = MusketMod.MOD_ID + ".shots_loaded";
 		private static final String LOADED_SHOT_ITEM_ID = MusketMod.MOD_ID + ".loaded_shot_item_id";

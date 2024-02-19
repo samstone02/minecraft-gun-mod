@@ -6,6 +6,7 @@ import name.musket_mod.entities.ai.MusketAttackGoal;
 import name.musket_mod.items.MusketItem;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
@@ -18,51 +19,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 
 @Mixin(AbstractSkeletonEntity.class)
 public class AbstractSkeletonEntityMixin {
     @Inject(method = "updateAttackType()V",
             at = @At(value = "TAIL", shift = At.Shift.BEFORE),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    public void updateAttackType(CallbackInfo callback, ItemStack itemStack) throws NoSuchFieldException, IllegalAccessException {
-        MusketMod.LOGGER.info("injecting");
-
+    public void updateAttackType(CallbackInfo callback, ItemStack itemStack) throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
         AbstractSkeletonEntity injectee = (AbstractSkeletonEntity)(Object) this;
 
-        itemStack = injectee.getStackInHand(ProjectileUtil.getHandPossiblyHolding(injectee, Items.MUSKET));
+        if (injectee.getWorld() != null && !injectee.getWorld().isClient) {
+            MusketMod.LOGGER.info("we are doing");
 
-        Field field1 = injectee.getClass().getField("targetSelector");
-        field1.setAccessible(true);
-        GoalSelector goalSelector = (GoalSelector) field1.get(injectee);
+            itemStack = injectee.getStackInHand(ProjectileUtil.getHandPossiblyHolding(injectee, Items.MUSKET));
 
-        MusketMod.LOGGER.info("accessed targetSelector");
-        MusketMod.LOGGER.info(itemStack.toString());
+            Field field1 = injectee.getClass().getField("goalSelector");
+            field1.setAccessible(true);
+            GoalSelector goalSelector = (GoalSelector) field1.get(injectee);
 
-        if (itemStack.isOf(Items.MUSKET)) {
+            MusketMod.LOGGER.info("accessed targetSelector");
+            MusketMod.LOGGER.info(itemStack.toString());
 
-            int i = 20;
-            if (injectee.getWorld().getDifficulty() != Difficulty.HARD) {
-                i = 40;
-            }
-//            self.bowAttackGoal.setAttackInterval(i);
-//            goalSelector.add(4, this.bowAttackGoal);
-            try {
+            if (itemStack.isOf(Items.MUSKET)) {
+                MusketMod.LOGGER.info("adding musket attack goal");
                 goalSelector.add(4, new MusketAttackGoal<>(injectee, 1.0, MusketItem.RELOAD_ANIMATION_TICKS, 25f));
-
-                MusketMod.LOGGER.info("added musket attack goal");
-            }
-            catch (Exception ex) {
-                MusketMod.LOGGER.info(ex.toString());
-            }
-        } else {
-            try {
-                Field field2 = injectee.getClass().getField("meleeAttackGoal");
-                field2.setAccessible(true);
-                MeleeAttackGoal meleeAttackGoal = (MeleeAttackGoal) field2.get(injectee);
-
-                goalSelector.add(4, meleeAttackGoal);
-            } catch (Exception ex) {
-                MusketMod.LOGGER.info(ex.toString());
             }
         }
     }

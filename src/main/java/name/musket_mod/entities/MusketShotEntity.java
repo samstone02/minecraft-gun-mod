@@ -82,4 +82,5 @@ public interface MusketShotEntity {
         }
         return null;
     }
+    float getShotSpeed();
 }

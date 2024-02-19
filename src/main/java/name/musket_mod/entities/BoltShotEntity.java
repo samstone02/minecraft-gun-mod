@@ -20,9 +20,9 @@ public class BoltShotEntity extends PersistentProjectileEntity
 		implements MusketShotEntity {
 	private static final ItemStack DEFAULT_STACK = new ItemStack(Items.BOLT_SHOT);
 	public static final EntityFactory<BoltShotEntity> FACTORY = new Factory();
-	public static final float SHOT_SPEED = 6.0f;
 	public static final float BASE_DAMAGE_VALUE = 12f;
 	private int durability = 5; // a bolt's durability equals how many "fragile" blocks (glass, glowstone) it can break.
+	//<editor-fold desc="Constructors">
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world) {
 		this(type, world, DEFAULT_STACK);
 	}
@@ -38,13 +38,11 @@ public class BoltShotEntity extends PersistentProjectileEntity
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, ItemStack stack) {
 		super(type, owner, world, stack);
 	}
+	//</editor-fold>
+	public float getShotSpeed() { return  6.0f; }
 	@Override
 	public void onCollision(HitResult hitResult) {
 		if (this.getWorld().isClient) {
-			// NOTE: If we don't ensure that the server thread is running this function
-			// then we can get rendering bugs where there is no breaking particles when firing the shots.
-			// For some reason, setting the environment type to server works,
-			// but the shot entity is not discarded upon collision. Don't ask my why.
 			return;
 		}
 		super.onCollision(hitResult);

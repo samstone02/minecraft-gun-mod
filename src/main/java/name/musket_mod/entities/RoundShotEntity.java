@@ -17,25 +17,21 @@ import net.minecraft.world.World;
 
 public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntity {
 	public static final Factory FACTORY = new Factory();
-	public static final float SHOT_SPEED = 4.0f;
 	public static final float BASE_DAMAGE_VALUE = 7f;
+	//<editor-fold desc="Constructors">
 	public RoundShotEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
 		super(entityType, world);
 	}
 	public RoundShotEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world) {
 		super(type, owner, world);
 	}
+	//</editor-fold>
 	@Override
-	protected Item getDefaultItem() {
-		return Items.ROUND_SHOT;
-	}
+	protected Item getDefaultItem() { return Items.ROUND_SHOT; }
+	public float getShotSpeed() { return 4.0f; }
 	@Override
 	public void onCollision(HitResult hitResult) {
 		if (this.getWorld().isClient) {
-			// NOTE: If we don't ensure that the server thread is running this function
-			// then we can get rendering bugs where there is no breaking particles when firing the shots.
-			// For some reason, setting the environment type to server works,
-			// but the shot entity is not discarded upon collision. Don't ask my why.
 			return;
 		}
 		super.onCollision(hitResult);

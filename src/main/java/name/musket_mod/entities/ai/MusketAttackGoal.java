@@ -1,14 +1,16 @@
 package name.musket_mod.entities.ai;
 
 import name.musket_mod.Items;
-import name.musket_mod.MusketMod;
+import name.musket_mod.items.MusketItem;
+import name.musket_mod.items.MusketShootable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.ItemStack;
 
 import java.util.EnumSet;
 
@@ -18,7 +20,7 @@ public class MusketAttackGoal<T extends HostileEntity> extends Goal {
     private final double speed;
     private final int attackInterval;
     private final float squaredRange;
-    //</editor-fold>ss
+    //</editor-fold>
     //<editor-fold desc="Tracking Members">
     private float combatTicks;
     private boolean movingToLeft = false;
@@ -201,12 +203,22 @@ public class MusketAttackGoal<T extends HostileEntity> extends Goal {
                 int i = this.actor.getItemUseTime();
                 if (i >= 20) {
                     this.actor.clearActiveItem();
-                    ((RangedAttackMob)this.actor).shootAt(target, 1);
+                    shootMusket((AbstractSkeletonEntity) this.actor, target);
                     this.cooldown = this.attackInterval;
                 }
             }
         } else if (--this.cooldown <= 0 && this.targetSeeingTicker >= -60) {
             this.actor.setCurrentHand(ProjectileUtil.getHandPossiblyHolding(this.actor, Items.MUSKET));
         }
+    }
+    public void shootMusket(AbstractSkeletonEntity skeleton, LivingEntity target) {
+        ItemStack musketStack = skeleton.getStackInHand(ProjectileUtil.getHandPossiblyHolding(skeleton, Items.MUSKET));
+        ItemStack shotStack = skeleton.getOffHandStack();
+        if (shotStack == null || !(shotStack.getItem() instanceof MusketShootable)) {
+            shotStack = new ItemStack(Items.ROUND_SHOT);
+        }
+
+        ((MusketItem) musketStack.getItem()).createMuzzleFlash(skeleton.getWorld(), skeleton);
+        ((MusketShootable) shotStack.getItem()).onEntityShoot(skeleton.getWorld(), skeleton, target);
     }
 }

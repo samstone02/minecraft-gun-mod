@@ -12,16 +12,12 @@ public class RoundShotItem extends Item implements MusketShootable {
 	public RoundShotItem(Settings settings) {
 		super(settings);
 	}
-	public ProjectileEntity onShoot(World world, LivingEntity owner) {
-		RoundShotEntity shot = new RoundShotEntity(Entities.ROUND_SHOT, owner, world);
-		shot.setPos(owner.getX(), owner.getEyeY() - 0.15f, owner.getZ());
-		shot.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0.0f, RoundShotEntity.SHOT_SPEED, 1.0f);
-		world.spawnEntity(shot);
-
-		return null; // TODO: Update return type of onShoot?
-	}
 	@Override
 	public String getId() {
 		return ITEM_ID;
+	}
+	@Override
+	public ProjectileEntity instantiateShotEntity(World world, LivingEntity owner) {
+		return new RoundShotEntity(Entities.ROUND_SHOT, owner, world);
 	}
 }

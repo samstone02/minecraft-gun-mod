@@ -161,7 +161,7 @@ public class MusketItem extends Item {
 			return;
 		}
 
-		shot.onShoot(world, player);
+		shot.onPlayerShoot(world, player);
 
 		ItemStack itemStack = player.getStackInHand(hand);
 		NbtCompound nbt = itemStack.getOrCreateNbt();
@@ -172,23 +172,7 @@ public class MusketItem extends Item {
 			nbt.remove(NBT.LOADED_SHOT_ITEM_ID);
 		}
 
-		float pitch = (float)(Math.PI / 180.0) * player.getPitch();
-		float yaw = (float)(Math.PI / 180.0) * player.getHeadYaw();
-
-		double x = player.getX() + -MathHelper.sin(yaw) * MathHelper.cos(-pitch);
-		double y = player.getEyeY() + MathHelper.sin(-pitch);
-		double z = player.getZ() + MathHelper.cos(yaw) * MathHelper.cos(-pitch);
-		world.createExplosion(
-				player, x, y, z,
-				0, false, World.ExplosionSourceType.NONE);
-
-		Box box = new Box(
-				player.getX() - SCARE_RADIUS, player.getY() - SCARE_RADIUS, player.getZ() - SCARE_RADIUS,
-				player.getX() + SCARE_RADIUS, player.getY() + SCARE_RADIUS, player.getZ() + SCARE_RADIUS);
-		List<AnimalEntity> animals = world.getEntitiesByType(TypeFilter.instanceOf(AnimalEntity.class), box, Objects::nonNull);
-		for (AnimalEntity animal : animals) {
-			animal.setAttacker(player);
-		}
+		createMuzzleFlash(world, player);
 	}
 	private void reload(PlayerEntity player, Hand hand) {
 		int index = getShotIndexFromInventory(player, hand);
@@ -255,6 +239,26 @@ public class MusketItem extends Item {
 		}
 
 		return -2;
+	}
+	public void createMuzzleFlash(World world, LivingEntity user) {
+		float pitch = (float)(Math.PI / 180.0) * user.getPitch();
+		float yaw = (float)(Math.PI / 180.0) * user.getHeadYaw();
+
+		double x = user.getX() + -MathHelper.sin(yaw) * MathHelper.cos(-pitch);
+		double y = user.getEyeY() + MathHelper.sin(-pitch);
+		double z = user.getZ() + MathHelper.cos(yaw) * MathHelper.cos(-pitch);
+
+		world.createExplosion(
+				user, x, y, z,
+				0, false, World.ExplosionSourceType.NONE);
+
+		Box box = new Box(
+				user.getX() - SCARE_RADIUS, user.getY() - SCARE_RADIUS, user.getZ() - SCARE_RADIUS,
+				user.getX() + SCARE_RADIUS, user.getY() + SCARE_RADIUS, user.getZ() + SCARE_RADIUS);
+		List<AnimalEntity> animals = world.getEntitiesByType(TypeFilter.instanceOf(AnimalEntity.class), box, Objects::nonNull);
+		for (AnimalEntity animal : animals) {
+			animal.setAttacker(user);
+		}
 	}
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {

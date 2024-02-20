@@ -5,13 +5,9 @@ import name.musket_mod.MusketMod;
 import name.musket_mod.entities.ai.MusketAttackGoal;
 import name.musket_mod.items.MusketItem;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.world.Difficulty;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.lang.reflect.Field;
-import java.util.Iterator;
 
 @Mixin(AbstractSkeletonEntity.class)
 public class AbstractSkeletonEntityMixin {

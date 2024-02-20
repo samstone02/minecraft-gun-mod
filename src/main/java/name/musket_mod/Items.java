@@ -3,13 +3,14 @@ package name.musket_mod;
 import name.musket_mod.items.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class Items {
-    public static final MusketItem MUSKET = new MusketItem(new FabricItemSettings());
+    public static final MusketItem MUSKET = new MusketItem(new FabricItemSettings().maxCount(1).maxDamage(5).fireproof());
     public static final BoltShotItem BOLT_SHOT = new BoltShotItem(new FabricItemSettings());
     public static final RoundShotItem ROUND_SHOT = new RoundShotItem(new FabricItemSettings());
     public static final ShellShotItem SHELL_SHOT = new ShellShotItem(new FabricItemSettings());

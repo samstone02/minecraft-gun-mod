@@ -2,7 +2,9 @@ package name.musket_mod.items;
 
 import name.musket_mod.Items;
 import name.musket_mod.MusketMod;
+import name.musket_mod.enchantments.OvercapacityEnchantment;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +12,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
@@ -173,6 +176,10 @@ public class MusketItem extends Item {
 		}
 
 		createMuzzleFlash(world, player);
+
+		player.getStackInHand(hand).damage(1, player, (e) -> {
+			e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
+		});
 	}
 	private void reload(PlayerEntity player, Hand hand) {
 		int index = getShotIndexFromInventory(player, hand);
@@ -188,10 +195,12 @@ public class MusketItem extends Item {
 			return;
 		}
 
-		shotStack.decrement(1);
+		int count = getCountToLoad(player, hand, index);
+
+		shotStack.decrement(count);
 
 		NbtCompound nbt = player.getStackInHand(hand).getOrCreateNbt();
-		nbt.put(NBT.SHOTS_LOADED, NbtInt.of(1));
+		nbt.put(NBT.SHOTS_LOADED, NbtInt.of(count));
 		nbt.put(NBT.LOADED_SHOT_ITEM_ID, NbtString.of(((MusketShootable) shotStack.getItem()).getId()));
 	}
 	private MusketShootable nextShot(PlayerEntity player, Hand hand) {
@@ -239,6 +248,24 @@ public class MusketItem extends Item {
 		}
 
 		return -2;
+	}
+	private int getCountToLoad(PlayerEntity player, Hand hand, int index) {
+		int count = player.getInventory().getStack(index).getCount();
+
+		ItemStack musketStack = player.getStackInHand(hand);
+		for (NbtElement enchantment : musketStack.getEnchantments()) {
+			NbtCompound compound = (NbtCompound) enchantment;
+			if (compound.getString("id").equals(MusketMod.MOD_ID + ":" + OvercapacityEnchantment.ENCHANTMENT_ID)) {
+				MusketMod.LOGGER.info("FOUND ENCHANTMENT: " + compound.toString());
+				int lvl = compound.getShort("lvl");
+				if (count > lvl + 1) {
+					count = lvl + 1;
+				}
+				return count;
+			}
+		}
+
+		return 1;
 	}
 	public void createMuzzleFlash(World world, LivingEntity user) {
 		float pitch = (float)(Math.PI / 180.0) * user.getPitch();

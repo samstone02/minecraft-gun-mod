@@ -78,6 +78,10 @@ public class MusketItem extends Item {
 		NbtCompound nbt = stack.getOrCreateNbt();
 		return nbt.getString(NBT.USE_STATE);
 	}
+	@Override
+	public int getEnchantability() {
+		return 5;
+	}
 	//</editor-fold>
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {

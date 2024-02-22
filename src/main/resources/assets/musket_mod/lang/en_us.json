@@ -1,10 +1,15 @@
 {
-	"_comment": "Tooltips are not yet working. Need to override appendToolTip in the item class.",
 	"item.musket_mod.musket": "Musket",
 	"item.musket_mod.bolt_shot": "Bolt Shot",
 	"item.musket_mod.round_shot": "Round Shot",
 	"item.musket_mod.shell_shot": "Shell Shot",
+
 	"tooltip.musket_mod.musket.not_loaded": "Unloaded",
-	"tooltip.musket_mod.musket.is_loaded": "%d %s%s loaded"
+	"tooltip.musket_mod.musket.is_loaded": "%d %s%s loaded",
+
+	"enchantment.musket_mod.overcapacity": "Overcapacity",
+	"enchantment.musket_mod.puncturing": "Puncturing",
+	"enchantment.musket_mod.silencing": "Silencing",
+	"enchantment.musket_mod.velocity": "Velocity"
 }
 

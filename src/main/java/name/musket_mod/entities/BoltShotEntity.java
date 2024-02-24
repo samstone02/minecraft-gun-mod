@@ -2,7 +2,6 @@ package name.musket_mod.entities;
 
 import name.musket_mod.DamageTypes;
 import name.musket_mod.Items;
-import name.musket_mod.MusketMod;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EntityType.EntityFactory;
 import net.minecraft.entity.LivingEntity;
@@ -10,7 +9,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -31,9 +29,6 @@ public class BoltShotEntity extends PersistentProjectileEntity
 	}
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world, ItemStack stack) {
 		super(type, world, stack);
-	}
-	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, double x, double y, double z, World world, ItemStack stack) {
-		super(type, x, y, z, world, stack);
 	}
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, ItemStack stack, int durabilityLvl) {
 		super(type, owner, world, stack);
@@ -57,6 +52,7 @@ public class BoltShotEntity extends PersistentProjectileEntity
 		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
 		hitResult.getEntity().damage(source, BASE_DAMAGE_VALUE);
 		hitResult.getEntity().onDamaged(source);
+		this.durability = 0;
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {

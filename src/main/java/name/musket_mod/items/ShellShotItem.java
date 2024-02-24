@@ -5,6 +5,7 @@ import name.musket_mod.entities.ShellShotPelletEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ShellShotItem extends Item implements MusketShootable {
@@ -17,7 +18,8 @@ public class ShellShotItem extends Item implements MusketShootable {
 	public String getId() {
 		return ITEM_ID;
 	}
-	public void onPlayerShoot(World world, LivingEntity owner) {
+	@Override
+	public void onPlayerShoot(World world, LivingEntity owner, ItemStack musketStack) {
 		for (int i = 0; i < pelletsPerShell; i++) {
 			MusketShootable.super.onPlayerShoot(world, owner, owner.getMainHandStack());
 		}

@@ -8,7 +8,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -47,13 +46,15 @@ public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntit
 		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
 		hitResult.getEntity().damage(source, BASE_DAMAGE_VALUE);
 		hitResult.getEntity().onDamaged(source);
+		this.durability = 0;
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {
 		super.onBlockHit(hitResult);
 		if (this.getOwner() == null) return; // on world start, if an entity exists then it will cause crash since it has no owner
-		durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
+		this.durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
 				(this.getOwner().isPlayer())? (PlayerEntity)this.getOwner() : null);
+		this.setVelocity(this.getVelocity().normalize()); // Reduce velocity so that it doesn't "clip" through blocks
 	}
 	public static class Factory implements EntityType.EntityFactory<RoundShotEntity> {
 		@Override

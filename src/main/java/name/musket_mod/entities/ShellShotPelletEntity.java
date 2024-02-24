@@ -52,6 +52,7 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 		living.setHealth(living.getHealth() - BASE_DAMAGE_VALUE);
 		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
 		living.onDamaged(source);
+		this.durability = 0;
 	}
 	@Override
 	public void onBlockHit(BlockHitResult hitResult) {
@@ -59,6 +60,7 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 		if (this.getOwner() == null) return; // on world start, if an entity exists then it will cause crash since it has no owner
 		this.durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
 				(this.getOwner().isPlayer())? (PlayerEntity)this.getOwner() : null);
+		this.setVelocity(this.getVelocity().normalize()); // Reduce velocity so that it doesn't "clip" through blocks
 	}
 	public static class ShellShotPelletEntityFactory implements EntityType.EntityFactory<ShellShotPelletEntity> {
 		@Override

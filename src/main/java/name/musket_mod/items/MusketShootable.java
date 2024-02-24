@@ -1,16 +1,30 @@
 package name.musket_mod.items;
 
+import name.musket_mod.MusketMod;
+import name.musket_mod.enchantments.Enchantments;
+import name.musket_mod.enchantments.OvercapacityEnchantment;
 import name.musket_mod.entities.MusketShotEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
 public interface MusketShootable {
-	default void onPlayerShoot(World world, LivingEntity owner) {
+	default void onPlayerShoot(World world, LivingEntity owner, ItemStack musketStack) {
+		float velocityModifier = 1;
+		for (NbtElement enchantment : musketStack.getEnchantments()) {
+			NbtCompound compound = (NbtCompound) enchantment;
+			if (compound.getString("id").equals(MusketMod.MOD_ID + ":" + Enchantments.VELOCITY.getEnchantmentId())) {
+				int lvl = compound.getShort("lvl");
+				velocityModifier = Enchantments.VELOCITY.getVelocityModifierForLevel(lvl);
+			}
+		}
 		ProjectileEntity shot = instantiateShotEntity(world, owner);
 		shot.setPos(owner.getX(), owner.getEyeY() - 0.15f, owner.getZ());
-		shot.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0.0f, ((MusketShotEntity) shot).getShotSpeed(), 1.0f);
+		shot.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0.0f, ((MusketShotEntity) shot).getShotSpeed() * velocityModifier, 1.0f);
 		world.spawnEntity(shot);
 	}
 	default void onEntityShoot(World world, LivingEntity owner, LivingEntity target) {

@@ -39,7 +39,7 @@ public class BoltShotEntity extends PersistentProjectileEntity
 		super(type, owner, world, stack);
 	}
 	//</editor-fold>
-	public float getShotSpeed() { return  6.0f; }
+	public float getShotSpeed() { return  4.0f; }
 	@Override
 	public void onCollision(HitResult hitResult) {
 		if (this.getWorld().isClient) {

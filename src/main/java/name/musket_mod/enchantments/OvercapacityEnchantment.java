@@ -8,8 +8,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-public class OvercapacityEnchantment extends Enchantment {
-    public static String ENCHANTMENT_ID = "overcapacity";
+public class OvercapacityEnchantment extends MusketEnchantment {
     protected OvercapacityEnchantment() {
         super(Enchantment.Rarity.RARE, EnchantmentTarget.BREAKABLE, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
     }
@@ -25,9 +24,9 @@ public class OvercapacityEnchantment extends Enchantment {
     public int getMaxLevel() {
         return 2;
     }
+
     @Override
-    public boolean isAcceptableItem(ItemStack stack) {
-        return super.isAcceptableItem(stack)
-            || stack.getItem() instanceof MusketItem;
+    public String getEnchantmentId() {
+        return "overcapacity";
     }
 }

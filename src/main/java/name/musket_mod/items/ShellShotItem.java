@@ -19,7 +19,7 @@ public class ShellShotItem extends Item implements MusketShootable {
 	}
 	public void onPlayerShoot(World world, LivingEntity owner) {
 		for (int i = 0; i < pelletsPerShell; i++) {
-			MusketShootable.super.onPlayerShoot(world, owner);
+			MusketShootable.super.onPlayerShoot(world, owner, owner.getMainHandStack());
 		}
 	}
 	@Override

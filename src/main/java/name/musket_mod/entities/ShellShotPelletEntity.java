@@ -28,7 +28,7 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 		return Items.SHELL_SHOT_PELLET;
 	}
 	@Override
-	public float getShotSpeed() { return 4.0f; }
+	public float getShotSpeed() { return 3.0f; }
 	public void onCollision(HitResult hitResult) {
 		if (this.getWorld().isClient) {
 			return;

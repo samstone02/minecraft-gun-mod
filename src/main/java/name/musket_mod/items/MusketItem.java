@@ -2,6 +2,7 @@ package name.musket_mod.items;
 
 import name.musket_mod.Items;
 import name.musket_mod.MusketMod;
+import name.musket_mod.enchantments.Enchantments;
 import name.musket_mod.enchantments.OvercapacityEnchantment;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
@@ -172,7 +173,7 @@ public class MusketItem extends Item {
 			return;
 		}
 
-		shot.onPlayerShoot(world, player);
+		shot.onPlayerShoot(world, player, player.getStackInHand(hand));
 
 		ItemStack itemStack = player.getStackInHand(hand);
 		NbtCompound nbt = itemStack.getOrCreateNbt();
@@ -263,7 +264,7 @@ public class MusketItem extends Item {
 		ItemStack musketStack = player.getStackInHand(hand);
 		for (NbtElement enchantment : musketStack.getEnchantments()) {
 			NbtCompound compound = (NbtCompound) enchantment;
-			if (compound.getString("id").equals(MusketMod.MOD_ID + ":" + OvercapacityEnchantment.ENCHANTMENT_ID)) {
+			if (compound.getString("id").equals(MusketMod.MOD_ID + ":" + Enchantments.OVERCAPACITY.getEnchantmentId())) {
 				MusketMod.LOGGER.info("FOUND ENCHANTMENT: " + compound.toString());
 				int lvl = compound.getShort("lvl");
 				if (count > lvl + 1) {

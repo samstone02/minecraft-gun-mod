@@ -28,7 +28,7 @@ public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntit
 	//</editor-fold>
 	@Override
 	protected Item getDefaultItem() { return Items.ROUND_SHOT; }
-	public float getShotSpeed() { return 4.0f; }
+	public float getShotSpeed() { return 3.0f; }
 	@Override
 	public void onCollision(HitResult hitResult) {
 		if (this.getWorld().isClient) {

@@ -83,7 +83,11 @@ public class MusketItem extends Item {
 		return 5;
 	}
 	//</editor-fold>
-    @Override
+	@Override
+	public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+		return stack.getItem() == Items.MUSKET && ingredient.getItem() == net.minecraft.item.Items.NETHERITE_INGOT;
+	}
+	@Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
 		super.use(world, player, hand);
 		if (world.isClient) {

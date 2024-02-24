@@ -3,13 +3,10 @@
 	"package": "name.musket_mod.mixins",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"AbstractSkeletonEntityMixin",
-		"EnchantmentHelperMixin",
-		"EnchantmentScreenHandlerMixin"
+		"AbstractSkeletonEntityMixin"
 	],
 	"client": [
-		"HeldItemRendererMixin",
-		"EnchantmentScreenMixin"
+		"HeldItemRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

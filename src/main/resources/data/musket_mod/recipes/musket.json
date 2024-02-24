@@ -2,19 +2,16 @@
 	"type":"minecraft:crafting_shaped",
 	"category": "equipment",
 	"pattern": [
-		"FA ",
-		"III",
+		"F  ",
+		"WII",
 		"W  "
 	],
 	"key": {
-		"A": {
-			"item": "minecraft:amethyst_shard"
-		},
 		"F": {
 			"item": "minecraft:flint"
 		},
 		"I": {
-			"item": "minecraft:iron_ingot"
+			"item": "minecraft:netherite_ingot"
 		},
 		"W": {
 			"tag": "minecraft:logs"

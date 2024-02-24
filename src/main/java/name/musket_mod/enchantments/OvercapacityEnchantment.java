@@ -4,17 +4,22 @@ import name.musket_mod.MusketMod;
 import name.musket_mod.items.MusketItem;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 public class OvercapacityEnchantment extends Enchantment {
     public static String ENCHANTMENT_ID = "overcapacity";
     protected OvercapacityEnchantment() {
-        super(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.BREAKABLE, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
+        super(Enchantment.Rarity.RARE, EnchantmentTarget.BREAKABLE, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
     }
     @Override
     public int getMinPower(int level) {
-        return 1;
+        return 15 + 15 * (level - 1);
+    }
+    @Override
+    public int getMaxPower(int level) {
+        return 100;
     }
     @Override
     public int getMaxLevel() {
@@ -22,8 +27,6 @@ public class OvercapacityEnchantment extends Enchantment {
     }
     @Override
     public boolean isAcceptableItem(ItemStack stack) {
-        MusketMod.LOGGER.info("In Overcap enchant: " + stack.getItem().getName());
-        MusketMod.LOGGER.info((stack.getItem() instanceof MusketItem) + "");
         return super.isAcceptableItem(stack)
             || stack.getItem() instanceof MusketItem;
     }

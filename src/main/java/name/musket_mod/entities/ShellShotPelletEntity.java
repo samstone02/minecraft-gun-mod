@@ -17,11 +17,14 @@ import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 public class ShellShotPelletEntity extends ThrownItemEntity implements MusketShotEntity {
 	public static final ShellShotPelletEntityFactory FACTORY = new ShellShotPelletEntityFactory();
 	public static final float BASE_DAMAGE_VALUE = 4f;
-	public ShellShotPelletEntity(EntityType<? extends ThrownItemEntity> type, World world) {
+	private int durability = 1;
+	public ShellShotPelletEntity(EntityType<? extends ThrownItemEntity> type, World world, int durabilityLvl) {
 		super(type, world);
+		this.durability += durabilityLvl;
 	}
-	public ShellShotPelletEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world) {
+	public ShellShotPelletEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world, int durabilityLvl) {
 		super(type, owner, world);
+		this.durability += durabilityLvl;
 	}
 	@Override
 	protected Item getDefaultItem() {
@@ -34,7 +37,9 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 			return;
 		}
 		super.onCollision(hitResult);
-		this.discard();
+		if (this.durability <= 0) {
+			this.discard();
+		}
 	}
 	@Override
 	public void onEntityHit(EntityHitResult hitResult) {
@@ -52,13 +57,13 @@ public class ShellShotPelletEntity extends ThrownItemEntity implements MusketSho
 	public void onBlockHit(BlockHitResult hitResult) {
 		super.onBlockHit(hitResult);
 		if (this.getOwner() == null) return; // on world start, if an entity exists then it will cause crash since it has no owner
-		MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
+		this.durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
 				(this.getOwner().isPlayer())? (PlayerEntity)this.getOwner() : null);
 	}
 	public static class ShellShotPelletEntityFactory implements EntityType.EntityFactory<ShellShotPelletEntity> {
 		@Override
 		public ShellShotPelletEntity create(EntityType<ShellShotPelletEntity> type, World world) {
-			return new ShellShotPelletEntity(Entities.SHELL_SHOT_PELLET, world);
+			return new ShellShotPelletEntity(Entities.SHELL_SHOT_PELLET, world, 1);
 		}
 	}
 }

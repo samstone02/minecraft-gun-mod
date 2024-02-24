@@ -26,8 +26,8 @@ public class BoltShotEntity extends PersistentProjectileEntity
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world) {
 		this(type, world, DEFAULT_STACK);
 	}
-	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world) {
-		this(type, owner, world, DEFAULT_STACK);
+	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, int durabilityLvl) {
+		this(type, owner, world, DEFAULT_STACK, durabilityLvl);
 	}
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, World world, ItemStack stack) {
 		super(type, world, stack);
@@ -35,8 +35,9 @@ public class BoltShotEntity extends PersistentProjectileEntity
 	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, double x, double y, double z, World world, ItemStack stack) {
 		super(type, x, y, z, world, stack);
 	}
-	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, ItemStack stack) {
+	public BoltShotEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, ItemStack stack, int durabilityLvl) {
 		super(type, owner, world, stack);
+		this.durability += durabilityLvl * 3;
 	}
 	//</editor-fold>
 	public float getShotSpeed() { return  4.0f; }
@@ -61,9 +62,8 @@ public class BoltShotEntity extends PersistentProjectileEntity
 	public void onBlockHit(BlockHitResult hitResult) {
 		super.onBlockHit(hitResult);
 		if (this.getOwner() == null) return; // on world start, if an entity exists then it will cause crash since it has no owner
-		int durabilityUse = MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
+		this.durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
 				(this.getOwner().isPlayer())? (PlayerEntity)this.getOwner() : null);
-		durability -= durabilityUse;
 	}
 	public static class Factory implements EntityFactory<BoltShotEntity> {
 		@Override

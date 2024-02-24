@@ -29,7 +29,7 @@ public class ShellShotItem extends Item implements MusketShootable {
 		}
 	}
 	@Override
-	public ProjectileEntity instantiateShotEntity(World world, LivingEntity owner) {
-		return new ShellShotPelletEntity(Entities.SHELL_SHOT_PELLET, owner, world);
+	public ProjectileEntity instantiateShotEntity(World world, LivingEntity owner, int durabilityLvl) {
+		return new ShellShotPelletEntity(Entities.SHELL_SHOT_PELLET, owner, world, durabilityLvl);
 	}
 }

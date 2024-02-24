@@ -18,12 +18,14 @@ import net.minecraft.world.World;
 public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntity {
 	public static final Factory FACTORY = new Factory();
 	public static final float BASE_DAMAGE_VALUE = 7f;
+	private int durability = 1;
 	//<editor-fold desc="Constructors">
 	public RoundShotEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
 		super(entityType, world);
 	}
-	public RoundShotEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world) {
+	public RoundShotEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world, int durabilityLvl) {
 		super(type, owner, world);
+		this.durability += durabilityLvl;
 	}
 	//</editor-fold>
 	@Override
@@ -35,7 +37,9 @@ public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntit
 			return;
 		}
 		super.onCollision(hitResult);
-		this.discard();
+		if (this.durability <= 0) {
+			this.discard();
+		}
 	}
 	@Override
 	public void onEntityHit(EntityHitResult hitResult) {
@@ -48,7 +52,7 @@ public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntit
 	public void onBlockHit(BlockHitResult hitResult) {
 		super.onBlockHit(hitResult);
 		if (this.getOwner() == null) return; // on world start, if an entity exists then it will cause crash since it has no owner
-		MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
+		durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
 				(this.getOwner().isPlayer())? (PlayerEntity)this.getOwner() : null);
 	}
 	public static class Factory implements EntityType.EntityFactory<RoundShotEntity> {

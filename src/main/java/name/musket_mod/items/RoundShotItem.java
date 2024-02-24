@@ -17,7 +17,7 @@ public class RoundShotItem extends Item implements MusketShootable {
 		return ITEM_ID;
 	}
 	@Override
-	public ProjectileEntity instantiateShotEntity(World world, LivingEntity owner) {
-		return new RoundShotEntity(Entities.ROUND_SHOT, owner, world);
+	public ProjectileEntity instantiateShotEntity(World world, LivingEntity owner, int durabilityLvl) {
+		return new RoundShotEntity(Entities.ROUND_SHOT, owner, world, durabilityLvl);
 	}
 }

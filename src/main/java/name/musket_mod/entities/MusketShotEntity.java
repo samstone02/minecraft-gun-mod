@@ -55,7 +55,6 @@ public abstract class MusketShotEntity extends ThrownItemEntity {
             block.onBreak(world, hitResult.getBlockPos(), block.getDefaultState(), player);
             block.onBroken(world, hitResult.getBlockPos(), block.getDefaultState());
             world.breakBlock(hitResult.getBlockPos(), false);
-            this.durability -= 1;
         }
         if (isBlockCrackable(block)) {
             Block replacement = getBlockCracked(block);
@@ -63,8 +62,8 @@ public abstract class MusketShotEntity extends ThrownItemEntity {
             block.onBroken(world, hitResult.getBlockPos(), block.getDefaultState());
             world.breakBlock(hitResult.getBlockPos(), false);
             world.setBlockState(hitResult.getBlockPos(), replacement.getDefaultState());
-            this.durability = 0;
         }
+        this.durability -= 1;
 
         this.setVelocity(this.getVelocity().normalize());
     }

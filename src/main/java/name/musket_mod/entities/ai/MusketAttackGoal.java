@@ -1,8 +1,10 @@
 package name.musket_mod.entities.ai;
 
 import name.musket_mod.Items;
+import name.musket_mod.enchantments.Enchantments;
 import name.musket_mod.items.MusketItem;
 import name.musket_mod.items.MusketShootable;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -218,7 +220,9 @@ public class MusketAttackGoal<T extends HostileEntity> extends Goal {
             shotStack = new ItemStack(Items.ROUND_SHOT);
         }
 
-        ((MusketItem) musketStack.getItem()).createMuzzleFlash(skeleton.getWorld(), skeleton);
+        int silencingLvl = EnchantmentHelper.getLevel(Enchantments.SILENCING, musketStack);
+
+        ((MusketItem) musketStack.getItem()).createMuzzleFlash(skeleton.getWorld(), skeleton, silencingLvl >= 1);
         ((MusketShootable) shotStack.getItem()).onEntityShoot(skeleton.getWorld(), skeleton, target);
     }
 }

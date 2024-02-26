@@ -5,6 +5,7 @@ import name.musket_mod.MusketMod;
 import name.musket_mod.enchantments.Enchantments;
 import name.musket_mod.enchantments.OvercapacityEnchantment;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -16,12 +17,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -184,7 +188,9 @@ public class MusketItem extends Item {
 			nbt.remove(NBT.LOADED_SHOT_ITEM_ID);
 		}
 
-		createMuzzleFlash(world, player);
+		int silencingLvl = EnchantmentHelper.getLevel(Enchantments.SILENCING, itemStack);
+
+		createMuzzleFlash(world, player, silencingLvl >= 1);
 
 		player.getStackInHand(hand).damage(1, player, (e) -> {
 			e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
@@ -276,7 +282,7 @@ public class MusketItem extends Item {
 
 		return 1;
 	}
-	public void createMuzzleFlash(World world, LivingEntity user) {
+	public void createMuzzleFlash(World world, LivingEntity user, boolean isSilenced) {
 		float pitch = (float)(Math.PI / 180.0) * user.getPitch();
 		float yaw = (float)(Math.PI / 180.0) * user.getHeadYaw();
 
@@ -284,13 +290,26 @@ public class MusketItem extends Item {
 		double y = user.getEyeY() + MathHelper.sin(-pitch);
 		double z = user.getZ() + MathHelper.cos(yaw) * MathHelper.cos(-pitch);
 
+//		world.createExplosion(
+//				user, x, y, z,
+//				0, false, World.ExplosionSourceType.NONE);
 		world.createExplosion(
-				user, x, y, z,
-				0, false, World.ExplosionSourceType.NONE);
+				user,  Explosion.createDamageSource(world, user), null,
+				x, y, z, 0, false,
+				World.ExplosionSourceType.NONE,
+				ParticleTypes.EXPLOSION,
+				ParticleTypes.EXPLOSION_EMITTER,
+				isSilenced? SoundEvents.BLOCK_TRIPWIRE_CLICK_OFF: SoundEvents.ENTITY_GENERIC_EXPLODE
+		);
+
+		if (isSilenced) {
+			return;
+		}
 
 		Box box = new Box(
 				user.getX() - SCARE_RADIUS, user.getY() - SCARE_RADIUS, user.getZ() - SCARE_RADIUS,
-				user.getX() + SCARE_RADIUS, user.getY() + SCARE_RADIUS, user.getZ() + SCARE_RADIUS);
+				user.getX() + SCARE_RADIUS, user.getY() + SCARE_RADIUS, user.getZ() + SCARE_RADIUS
+		);
 		List<AnimalEntity> animals = world.getEntitiesByType(TypeFilter.instanceOf(AnimalEntity.class), box, Objects::nonNull);
 		for (AnimalEntity animal : animals) {
 			animal.setAttacker(user);
@@ -298,6 +317,8 @@ public class MusketItem extends Item {
 	}
 	@Override
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+		super.appendTooltip(stack, world, tooltip, context);
+
 		NbtCompound nbt = stack.getOrCreateNbt();
 
 		int shotsLoaded = nbt.getInt(NBT.SHOTS_LOADED);

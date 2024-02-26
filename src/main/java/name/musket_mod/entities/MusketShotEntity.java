@@ -70,9 +70,14 @@ public abstract class MusketShotEntity extends ThrownItemEntity {
     @Override
     public void onEntityHit(EntityHitResult hitResult) {
         super.onEntityHit(hitResult);
-        DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
+
+        Entity owner = this.getOwner();
+
+        DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT, owner);
+        hitResult.getEntity().handleAttack(this.getOwner());
         hitResult.getEntity().damage(source, getBaseDamage());
         hitResult.getEntity().onDamaged(source);
+
         this.durability = 0;
     }
     static boolean isBlockShatterable(Block block) {
@@ -95,7 +100,7 @@ public abstract class MusketShotEntity extends ThrownItemEntity {
             || block.equals(Registries.BLOCK.get(new Identifier("minecraft", "deepslate_tiles")))
             || block.equals(Registries.BLOCK.get(new Identifier("minecraft", "nether_bricks")))
             || block.equals(Registries.BLOCK.get(new Identifier("minecraft", "polished_blackstone_bricks")))
-            ||  block.equals(Registries.BLOCK.get(new Identifier("minecraft", "infested_stone_bricks")));
+            || block.equals(Registries.BLOCK.get(new Identifier("minecraft", "infested_stone_bricks")));
     }
     static Block getBlockCracked(Block block) {
         if (block.equals(Registries.BLOCK.get(new Identifier("minecraft", "dirt")))

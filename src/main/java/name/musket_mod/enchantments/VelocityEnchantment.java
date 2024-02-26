@@ -1,6 +1,5 @@
 package name.musket_mod.enchantments;
 
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
 
@@ -27,6 +26,6 @@ public class VelocityEnchantment extends MusketEnchantment {
         if (level < 0) {
             return 1;
         }
-        return (float) Math.pow(1.5f, level);
+        return (float) Math.pow(1.4f, level);
     }
 }

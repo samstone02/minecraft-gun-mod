@@ -19,6 +19,8 @@ public class ShellShotItem extends Item implements MusketShootable {
 		return ITEM_ID;
 	}
 	@Override
+	public float getDispersion() { return 15.0f; }
+	@Override
 	public void onPlayerShoot(World world, LivingEntity owner, ItemStack musketStack) {
 		for (int i = 0; i < pelletsPerShell; i++) {
 			MusketShootable.super.onPlayerShoot(world, owner, owner.getMainHandStack());

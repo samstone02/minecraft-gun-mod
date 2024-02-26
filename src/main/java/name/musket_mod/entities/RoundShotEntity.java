@@ -1,61 +1,28 @@
 package name.musket_mod.entities;
 
-import name.musket_mod.DamageTypes;
 import name.musket_mod.Entities;
 import name.musket_mod.Items;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
-public class RoundShotEntity extends ThrownItemEntity implements MusketShotEntity {
+public class RoundShotEntity extends MusketShotEntity {
 	public static final Factory FACTORY = new Factory();
-	public static final float BASE_DAMAGE_VALUE = 7f;
-	private int durability = 1;
 	//<editor-fold desc="Constructors">
-	public RoundShotEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
-		super(entityType, world);
+	public RoundShotEntity(EntityType<? extends ThrownItemEntity> type, World world) {
+		super(type, world);
 	}
-	public RoundShotEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world, int durabilityLvl) {
-		super(type, owner, world);
-		this.durability += durabilityLvl;
+	public RoundShotEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world, int additionalDurability) {
+		super(type, owner, world, additionalDurability);
 	}
 	//</editor-fold>
-	@Override
-	protected Item getDefaultItem() { return Items.ROUND_SHOT; }
-	public float getShotSpeed() { return 3.0f; }
-	@Override
-	public void onCollision(HitResult hitResult) {
-		if (this.getWorld().isClient) {
-			return;
-		}
-		super.onCollision(hitResult);
-		if (this.durability <= 0) {
-			this.discard();
-		}
-	}
-	@Override
-	public void onEntityHit(EntityHitResult hitResult) {
-		super.onEntityHit(hitResult);
-		DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
-		hitResult.getEntity().damage(source, BASE_DAMAGE_VALUE);
-		hitResult.getEntity().onDamaged(source);
-		this.durability = 0;
-	}
-	@Override
-	public void onBlockHit(BlockHitResult hitResult) {
-		super.onBlockHit(hitResult);
-		if (this.getOwner() == null) return; // on world start, if an entity exists then it will cause crash since it has no owner
-		this.durability -= MusketShotEntity.super.onBlockHit(hitResult, this.getWorld(),
-				(this.getOwner().isPlayer())? (PlayerEntity)this.getOwner() : null);
-		this.setVelocity(this.getVelocity().normalize()); // Reduce velocity so that it doesn't "clip" through blocks
-	}
+	//<editor-fold desc="Constructors">
+	@Override protected Item getDefaultItem() { return Items.ROUND_SHOT; }
+	@Override public float getShotSpeed() { return 3.0f; }
+	@Override public float getBaseDamage() { return 9f; }
+	//</editor-fold>
 	public static class Factory implements EntityType.EntityFactory<RoundShotEntity> {
 		@Override
 		public RoundShotEntity create(EntityType<RoundShotEntity> type, World world) {

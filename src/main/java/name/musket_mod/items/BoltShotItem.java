@@ -16,6 +16,8 @@ public class BoltShotItem extends Item implements MusketShootable {
 	public String getId() {
 		return ITEM_ID;
 	}
+	@Override
+	public float getDispersion() { return 1.0f; }
 	public ProjectileEntity instantiateShotEntity(World world, LivingEntity owner, int durabilityLvl) {
 		return new BoltShotEntity(Entities.BOLT_SHOT, owner, world, durabilityLvl);
 	}

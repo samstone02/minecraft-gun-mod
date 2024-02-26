@@ -1,24 +1,61 @@
 package name.musket_mod.entities;
 
+import name.musket_mod.DamageTypes;
 import net.minecraft.block.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
-public interface MusketShotEntity {
-    /**
-      * @return int durabilityUse -- how much durability the collision used.
-      */
-    default int onBlockHit(BlockHitResult hitResult, World world, PlayerEntity player) {
+public abstract class MusketShotEntity extends ThrownItemEntity {
+    protected int durability = 1;
+    public MusketShotEntity(EntityType<? extends ThrownItemEntity> type, World world) {
+        super(type, world);
+    }
+    public MusketShotEntity(EntityType<? extends ThrownItemEntity> type, LivingEntity owner, World world, int additionalDurability) {
+        super(type, owner, world);
+        this.durability += additionalDurability;
+    }
+    @Override
+    public void onCollision(HitResult hitResult) {
+        if (this.getWorld().isClient) {
+            return;
+        }
+        super.onCollision(hitResult);
+        if (this.durability <= 0) {
+            this.discard();
+        }
+    }
+    @Override
+    public void onBlockHit(BlockHitResult hitResult) {
+        super.onBlockHit(hitResult);
+
+        World world = getWorld();
+        Entity owner = getOwner();
+
+        if (world.isClient) {
+            return;
+        }
+        if (!(owner instanceof PlayerEntity)) {
+            return;
+        }
+
+        PlayerEntity player = (PlayerEntity) owner;
+
         Block block = world.getBlockState(hitResult.getBlockPos()).getBlock();
         if (isBlockShatterable(block)) {
             block.onBreak(world, hitResult.getBlockPos(), block.getDefaultState(), player);
             block.onBroken(world, hitResult.getBlockPos(), block.getDefaultState());
             world.breakBlock(hitResult.getBlockPos(), false);
-            return 1;
+            this.durability -= 1;
         }
         if (isBlockCrackable(block)) {
             Block replacement = getBlockCracked(block);
@@ -26,9 +63,18 @@ public interface MusketShotEntity {
             block.onBroken(world, hitResult.getBlockPos(), block.getDefaultState());
             world.breakBlock(hitResult.getBlockPos(), false);
             world.setBlockState(hitResult.getBlockPos(), replacement.getDefaultState());
-            return 1000;
+            this.durability = 0;
         }
-        return 0;
+
+        this.setVelocity(this.getVelocity().normalize());
+    }
+    @Override
+    public void onEntityHit(EntityHitResult hitResult) {
+        super.onEntityHit(hitResult);
+        DamageSource source = DamageTypes.of(this.getWorld(), DamageTypes.MUSKET_SHOT);
+        hitResult.getEntity().damage(source, getBaseDamage());
+        hitResult.getEntity().onDamaged(source);
+        this.durability = 0;
     }
     static boolean isBlockShatterable(Block block) {
         return block instanceof StainedGlassBlock
@@ -83,5 +129,6 @@ public interface MusketShotEntity {
         }
         return null;
     }
-    float getShotSpeed();
+    public abstract float getShotSpeed();
+    public abstract float getBaseDamage();
 }

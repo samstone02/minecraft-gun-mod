@@ -14,10 +14,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"name.musket_mod.MusketMod"
+			"samss.musket_mod.MusketMod"
 		],
 		"client": [
-			"name.musket_mod.MusketModClient"
+			"samss.musket_mod.MusketModClient"
 		]
 	},
 	"mixins": [
